@@ -67,6 +67,43 @@ int leader = LeaderIndex(points);
 Console.WriteLine($"Leader: {players[leader]} with {points[leader]}");
 Console.WriteLine($"Season total: {TotalPoints(points)}");
 
+//Part 2: Game Night
+//Asking the players for the points of the night and doing the calculations for the session, so adding the points and saving them and saying whos the winner
+
+string winnerTonight = "";
+int bestTonight = -1;
+
+//The reason for the for, each players name and season total needs to share an index, and I need that index to put the new total on the right place
+for (int i = 0; i < players.Length; i++)
+{
+    Console.Write($"Points tonight for {players[i]}: ");
+    int tonight = Convert.ToInt32(Console.ReadLine());
+
+    //The reason for the while, I need to use a while loop like the professor asked because we need to deny attempts outside of 0-20
+    while (tonight < 0 || tonight > MAX_POINTS)
+    {
+        Console.WriteLine($"Points must be from 0 to {MAX_POINTS}.");
+        Console.Write($"Points tonight for {players[i]}: ");
+        tonight = Convert.ToInt32(Console.ReadLine());
+    }
+
+    //Like the professor said we need to Convert on the way in and ToString on the way out
+    int season = Convert.ToInt32(points[i]) + tonight;
+    points[i] = season.ToString();
+
+    //Tracking tonight best score and who won tonight
+    if (tonight > bestTonight)
+    {
+        bestTonight = tonight;
+        winnerTonight = players[i];
+    }
+}
+
+//Displaying the new information on the menu and saving the new saved totals and replcing the previous ones
+Console.WriteLine($"Tonight's winner: {winnerTonight} with {bestTonight}\n");
+File.WriteAllLines(POINTS_FILE, points);
+Console.WriteLine("Saved points.txt.");
+
 //the 3 methods we will need
 /* static int LeaderIndex(string[] points)
 static int TotalPoints(string[] points)
