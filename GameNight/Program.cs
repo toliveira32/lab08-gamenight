@@ -20,12 +20,35 @@ Path.Combine(AppContext.BaseDirectory, "..", "..", ".."));
 Directory.SetCurrentDirectory(projectFolder);
 
 //The menu that displays to the user
+Console.WriteLine("=== GAME NIGHT LEADERBOARD ===\n");
+//Part 3: The History (first part)
+//Check every night played and display to the user what night it is currently
+string[] history = File.ReadAllLines(HISTORY_FILE);
+int tonightNumber = history.Length + 1;
+
+if (history.Length == 0)
+{
+    Console.WriteLine("No nights played yet.");
+}
+else
+{
+    Console.WriteLine($"Nights played: {history.Length}");
+
+    //The reason for the foreach, once again the professor asked to use a foreach and its because every past night prints the same way and the position doesnt matter, so I dont need the index
+    foreach (string night in history)
+    {
+        Console.WriteLine("  " + night);
+    }
+}
+Console.WriteLine($"Tonight is Night {tonightNumber}.\n");
 Console.WriteLine("PLAYER".PadRight(11) + "POINTS");
 
 //Part 1: The standings, read both files into arrays and display to the user how is the season going so far
 
 string[] players = File.ReadAllLines(PLAYERS_FILE);
 string[] points = File.ReadAllLines(POINTS_FILE);
+
+//The 3 methods that we have to use
 
 //Method to get the leader with the highest score out of the array
 static int LeaderIndex(string[] points)
@@ -54,6 +77,12 @@ static int TotalPoints(string[] points)
         total += Convert.ToInt32(p);
     }
     return total;
+}
+
+//Method to getting the history of the night, displaying who won and with how many points the person won
+static string HistoryEntry(int night, string winner, int points)
+{
+    return $"Night {night}: {winner} won with {points} points";
 }
 
 //Reason for the for, I need to have some sort of index for the two arrays, so I can display the exact position I want
@@ -104,7 +133,8 @@ Console.WriteLine($"Tonight's winner: {winnerTonight} with {bestTonight}\n");
 File.WriteAllLines(POINTS_FILE, points);
 Console.WriteLine("Saved points.txt.");
 
-//the 3 methods we will need
-/* static int LeaderIndex(string[] points)
-static int TotalPoints(string[] points)
-static string HistoryEntry(int night, string winner, int points) */
+//Part 3: The History (second part)
+//Doing the tonight report and saving it to the history file
+string[] entry = { HistoryEntry(tonightNumber, winnerTonight, bestTonight) };
+File.AppendAllLines(HISTORY_FILE, entry);
+Console.WriteLine($"Added to history.txt: {entry[0]}");
